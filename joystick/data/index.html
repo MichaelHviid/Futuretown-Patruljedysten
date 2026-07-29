@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 Joystick Konfiguration</title>
+    <style>
+        :root {
+            --primary: #2563eb; --background: #f1f5f9; --card: #ffffff; --text: #1e293b; --border: #cbd5e1; --danger: #ef4444; --secondary: #64748b;
+        }
+        body { font-family: system-ui, sans-serif; background-color: var(--background); color: var(--text); padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 600px; background: var(--card); padding: 24px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .header-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--background); padding-bottom: 10px; margin-bottom: 15px; }
+        h1 { margin: 0; font-size: 1.5rem; }
+        h2 { font-size: 1.1rem; margin-top: 20px; color: var(--primary); border-bottom: 1px dashed var(--border); padding-bottom: 4px;}
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: var(--background); padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 0.9rem; }
+        input[type="text"], input[type="password"], input[type="number"] { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; margin: 15px 0; }
+        .pin-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        button { width: 100%; background-color: var(--primary); color: white; border: none; padding: 12px; font-size: 1rem; font-weight: 600; border-radius: 6px; cursor: pointer; margin-top: 20px; }
+        button:hover { background-color: #1d4ed8; }
+        .btn-play { background-color: #10b981; padding: 4px 10px; font-size: 0.8rem; width: auto; margin-top: 0; }
+        .btn-play:hover { background-color: #059669; }
+        .led-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .btn-led { color: white; border: none; padding: 14px 8px; font-size: 0.9rem; font-weight: 600; border-radius: 8px; cursor: pointer; width: 100%; }
+        .btn-led:hover { opacity: 0.82; }
+        .btn-led-off { grid-column: span 2; background: #475569; }
+        .btn-reboot { background-color: var(--danger); font-size: 0.85rem; padding: 6px 12px; width: auto; margin-top: 0; }
+        .status { padding: 12px; border-radius: 6px; margin-top: 15px; display: none; font-weight: 500; text-align: center; }
+        .success { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .error { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
+        th, td { padding: 8px; border-bottom: 1px solid var(--border); text-align: left; }
+        th { background-color: #f8fafc; color: var(--secondary); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-row">
+        <h1>Joystick Setup</h1>
+        <button type="button" class="btn-reboot" onclick="rebootEnhed()">🔄 Genstart</button>
+    </div>
+    
+    <div class="info-grid">
+        <div><strong>MAC:</strong> <span id="info-mac">-</span></div>
+        <div><strong>IP:</strong> <span id="info-ip">-</span></div>
+    </div>
+
+    <form id="config-form">
+        <h2>Identitet & Enhedsnavn</h2>
+        <div class="form-group">
+            <label for="Name">Joystick Navn</label>
+            <input type="text" id="Name" name="Name" required>
+        </div>
+        <div class="form-group">
+            <label for="JoyID">Joystick ID</label>
+            <input type="number" id="JoyID" name="JoyID" min="1" max="255" required>
+        </div>
+        <div class="form-group">
+            <label for="GB_MAC">Gamebox MAC-adresse</label>
+            <input type="text" id="GB_MAC" name="GB_MAC" required>
+        </div>
+
+        <h2>Netværksforbindelse</h2>
+        <div class="form-group">
+            <label for="wifi_ssid">Eget WiFi Navn (SSID)</label>
+            <input type="text" id="wifi_ssid" name="wifi_ssid">
+        </div>
+        <div class="form-group">
+            <label for="wifi_pass">WiFi Kodeord</label>
+            <input type="password" id="wifi_pass" name="wifi_pass">
+        </div>
+        <div class="form-group">
+            <label for="WiFi_Chan">WiFi Kanal</label>
+            <input type="number" id="WiFi_Chan" name="WiFi_Chan" min="1" max="13" required>
+        </div>
+
+        <h2>Hardware Profil & Lyd-test</h2>
+        <div class="checkbox-group">
+            <input type="checkbox" id="HasAud" name="HasAud">
+            <label for="HasAud">Dette joystick har lyd</label>
+        </div>
+        <div class="form-group">
+            <label for="Vol">Lydstyrke (0 - 21)</label>
+            <input type="number" id="Vol" name="Vol" min="0" max="21">
+        </div>
+        <div class="form-group">
+            <label for="BtnCnt">Antal aktive knapper (1 - 11)</label>
+            <input type="number" id="BtnCnt" name="BtnCnt" min="1" max="11" required>
+        </div>
+        <div class="form-group">
+            <label for="SyncMs">Synkroniseringsvindue for knap 1-4 (ms)</label>
+            <input type="number" id="SyncMs" name="SyncMs" min="10" max="200" value="50">
+            <small style="color:var(--secondary)">Hvor mange ms må der gå fra første til sidste tryk, for at det tæller som synkront (anbefalet: 50ms)</small>
+        </div>
+
+        <h2>Lydfiler i LittleFS</h2>
+        <div style="max-height: 220px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Filnavn</th>
+                        <th>Størrelse</th>
+                        <th>Afspil</th>
+                    </tr>
+                </thead>
+                <tbody id="file-table-body">
+                    <tr><td colspan="3" style="text-align:center; color:#888;">Scanner LittleFS...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>LED Test</h2>
+        <div class="led-grid">
+            <button type="button" class="btn-led" style="background:#3b82f6" onclick="testLed(0,0,0,200)">💙 LED 1 — Blå</button>
+            <button type="button" class="btn-led" style="background:#22c55e" onclick="testLed(4,0,200,0)">💚 LED 5 — Grøn</button>
+            <button type="button" class="btn-led" style="background:#f97316" onclick="testLed(6,255,80,0)">🟠 LED 7 — Orange</button>
+            <button type="button" class="btn-led" style="background:#ef4444" onclick="testLed(8,200,0,0)">❤️ LED 9 — Rød</button>
+            <button type="button" class="btn-led btn-led-off" onclick="testLed(255,0,0,0)">⬛ Sluk alle</button>
+        </div>
+
+        <h2>GPIO Pin-Konfiguration</h2>
+        <div class="pin-grid" id="pin-container"></div>
+
+        <button type="submit">Gem Indstillinger</button>
+    </form>
+
+    <div id="status-box" class="status"></div>
+</div>
+
+<script>
+    // Generer pin felter
+    const pinContainer = document.getElementById('pin-container');
+    for (let i = 1; i <= 11; i++) {
+        const div = document.createElement('div');
+        div.className = 'form-group';
+        div.innerHTML = `<label for="P${i}">Knap ${i}</label><input type="number" id="P${i}" name="P${i}" min="0" max="48" value="0">`;
+        pinContainer.appendChild(div);
+    }
+
+    const form = document.getElementById('config-form');
+    const statusBox = document.getElementById('status-box');
+
+    // Hent og list filer direkte fra LittleFS
+    async function hentLydfiler() {
+        try {
+            const response = await fetch('/api/files');
+            const filer = await response.json();
+            const tbody = document.getElementById('file-table-body');
+            tbody.innerHTML = '';
+
+            if (filer.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#888;">Ingen lydfiler (.mp3/.wav) fundet.</td></tr>';
+                return;
+            }
+
+            filer.sort((a, b) => a.navn.localeCompare(b.navn, undefined, {numeric: true, sensitivity: 'base'}));
+
+            filer.forEach(f => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${f.navn}</strong></td>
+                    <td>${(f.size / 1024).toFixed(1)} KB</td>
+                    <td><button type="button" class="btn-play" onclick="afspilFil('${f.navn}')">▶ Afspil</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (err) {
+            document.getElementById('file-table-body').innerHTML = '<tr><td colspan="3" style="color:red; text-align:center;">Kunne ikke scanne filer</td></tr>';
+        }
+    }
+
+    window.afspilFil = async function(filnavn) {
+        try {
+            await fetch('/api/play-file', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fil: filnavn })
+            });
+        } catch (err) { alert('Kunne ikke afspille lyd'); }
+    }
+
+    window.rebootEnhed = async function() {
+        if (!confirm("Vil du genstarte joysticket nu?")) return;
+        showStatus("Genstarter enhed...", "success");
+        try {
+            await fetch('/api/reboot', { method: 'POST' });
+            setTimeout(() => { showStatus("Joysticket er genstartet i spil-tilstand!", "error"); }, 3000);
+        } catch (err) { showStatus("Fejl ved genstart", "error"); }
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const response = await fetch('/api/config');
+            const data = await response.json();
+
+            document.getElementById('info-mac').textContent = data.mac || '-';
+            document.getElementById('info-ip').textContent = data.ip || '-';
+            document.getElementById('Name').value = data.Name || '';
+            document.getElementById('JoyID').value = data.JoyID || 1;
+            document.getElementById('GB_MAC').value = data.GB_MAC || 'FF:FF:FF:FF:FF:FF';
+            document.getElementById('wifi_ssid').value = data.wifi_ssid || '';
+            document.getElementById('WiFi_Chan').value = data.WiFi_Chan || 1;
+            document.getElementById('HasAud').checked = data.HasAud === true;
+            document.getElementById('Vol').value = data.Vol !== undefined ? data.Vol : 15;
+            document.getElementById('BtnCnt').value  = data.BtnCnt  || 4;
+            document.getElementById('SyncMs').value  = data.SyncMs  !== undefined ? data.SyncMs : 50;
+
+            for (let i = 1; i <= 11; i++) {
+                if (data[`P${i}`] !== undefined) document.getElementById(`P${i}`).value = data[`P${i}`];
+            }
+        } catch (err) { showStatus('Fejl ved indlæsning af konfiguration', 'error'); }
+
+        hentLydfiler();
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        showStatus('Gemmer indstillinger...', 'success');
+        const formData = new FormData(form);
+        const payload = {
+            Name: formData.get('Name'), JoyID: parseInt(formData.get('JoyID')), GB_MAC: formData.get('GB_MAC'),
+            wifi_ssid: formData.get('wifi_ssid'), wifi_pass: formData.get('wifi_pass'), WiFi_Chan: parseInt(formData.get('WiFi_Chan')),
+            HasAud: document.getElementById('HasAud').checked, Vol: parseInt(formData.get('Vol')),
+            BtnCnt: parseInt(formData.get('BtnCnt')), SyncMs: parseInt(formData.get('SyncMs'))
+        };
+        for (let i = 1; i <= 11; i++) payload[`P${i}`] = parseInt(formData.get(`P${i}`)) || 0;
+
+        try {
+            const response = await fetch('/api/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) throw new Error();
+            showStatus('Indstillinger gemt! Tryk på "Genstart" øverst for at aktivere.', 'success');
+        } catch (err) { showStatus('Kunne ikke gemme indstillinger', 'error'); }
+    });
+
+    function showStatus(msg, type) { statusBox.textContent = msg; statusBox.className = `status ${type}`; statusBox.style.display = 'block'; }
+
+    window.testLed = async function(index, r, g, b) {
+        try {
+            await fetch('/api/led', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ index, r, g, b })
+            });
+        } catch (err) { alert('Kunne ikke styre LED'); }
+    }
+</script>
+</body>
+</html>

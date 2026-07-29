@@ -1,0 +1,31 @@
+# ══════════════════════════════════════════════════════════════
+#  Futuretown Gamebox – .gitignore
+#  Bygge-output og lokale filer skal ikke i git (de genskabes).
+# ══════════════════════════════════════════════════════════════
+
+# ── Arduino / ESP32 bygge-output (genskabes af build.sh) ──
+build/
+.build/
+*.bin
+*.elf
+*.map
+*.hex
+
+# ── Vue-admin (Gamebox/gamebox-admin): afhængigheder + bygge-output ──
+node_modules/
+dist/
+.vite/
+*.local
+
+# ── macOS ──
+.DS_Store
+**/.DS_Store
+
+# ── Editor / IDE ──
+.claude/
+.vscode/
+.idea/
+*.code-workspace
+
+# ── Arkiver / backups ──
+*.zip

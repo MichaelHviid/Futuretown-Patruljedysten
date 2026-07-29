@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Futuretown Gamebox</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  </head>
+  <body>
+
+    <div class="topnav">
+      <div style="display:flex">
+      <div style="margin: auto auto auto 10px">
+      <h1>Futuretown Gamebox</h1>
+      </div>
+      <div style="margin:auto 10px auto auto">
+	<a href="/update">Update</a>
+      </div>
+      </div>
+    </div>
+    
+    <div class="content">
+      <div class="card-grid">
+          <div class="card">
+            <p class="card-title">
+              <i class="fas fa-lightbulb"></i> GPIO 2</p>
+            <p>
+              <a href="on"><button class="button-on">ON</button></a>
+              <a href="off"><button class="button-off">OFF</button></a>
+            </p>
+            <p class="state">State: %STATE%</p>
+          </div>
+          <div class="card">
+            <p class="card-title"><i class="fas fa-lightbulb"></i>LED PIN</p>
+            <p>
+              <input >
+              <a href="ledpin"><button class="button-on">save</button></a>
+            </p>
+            <p>/ledpin=14</p>
+          </div>
+          <div class="card">
+            <p class="card-title"><i class="fas fa-lightbulb"></i>LED PIN</p>
+            <p>
+              <input >
+              <a href="ledbrightness"><button class="button-on">save</button></a>
+            </p>
+            <p>/ledbrightness=100 %LEDBRIGHTNESS%</p>
+          </div>
+      </div>
+    </div>
+  </body>
+</html>
+
