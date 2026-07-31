@@ -24,8 +24,8 @@ Stykliste og wirediagram for **gameboxen** (den store LED-strip-enhed der afvikl
 | Antal | Komponent | Formål |
 |:---:|---|---|
 | 1 | Kondensator ~1000 µF (6.3 V+) | Over strippens +5V/GND ved indgangen (buffer mod strømspidser) |
-| 1 | Modstand 330–470 Ω | I serie på dataledningen (GPIO 12 → DIN) |
-| 1 | Level shifter 3.3 V→5 V | Fx 74AHCT125 – hvis strippen er kræsen med 3.3 V-datasignal |
+
+> Dataledningen går **direkte** fra GPIO 12 til strippens DIN (3.3 V) – i denne opbygning bruges hverken serie-modstand eller 3.3→5 V level shifter.
 
 > **Strømdimensionering:** WS2812B trækker op til ~60 mA/pixel ved fuld hvid. 138 pixels ≈ 8 A worst-case; i praksis bruger spillene langt mindre. Vælg en 5 V-forsyning med god margin, og **strømforsyn strippen direkte** – ikke gennem ESP'ens 5V-pin.
 
@@ -35,7 +35,7 @@ Stykliste og wirediagram for **gameboxen** (den store LED-strip-enhed der afvikl
 
 | ESP32-pin | Forbindes til | Note |
 |---|---|---|
-| **GPIO 12** | LED-strip **DIN** | Evt. via 330 Ω serie-modstand |
+| **GPIO 12** | LED-strip **DIN** | Data-signal (3.3 V, direkte) |
 | **5V / VIN** | LED-strip **+5V** | Fra ekstern 5 V-forsyning (fælles) |
 | **GND** | LED-strip **GND** + forsyningens GND | **Fælles stel** – vigtigt |
 | **GPIO 4** | **Rød** knap → GND | `INPUT_PULLUP`, aktiv-lav |
@@ -59,7 +59,7 @@ flowchart LR
 
   PSU -->|"+5 V"| STRIP
   PSU ---|"GND (fælles stel)"| ESP
-  ESP  -->|"GPIO 12 → DIN (330 Ω)"| STRIP
+  ESP  -->|"GPIO 12 → DIN"| STRIP
   ESP  ---|"5V / GND"| STRIP
   RED  ---|"GPIO 4 ↔ GND"| ESP
   GRN  ---|"GPIO 15 ↔ GND"| ESP

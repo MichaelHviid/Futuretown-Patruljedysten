@@ -23,13 +23,17 @@ Firmwaren er den samme; forskellen er antal knapper (`BtnCount`) og om lyd er sl
 |:---:|---|---|
 | 1 | Adafruit QT Py ESP32-S3 (N4R2) | 4 MB flash, 2 MB PSRAM, USB-C |
 | 4 | Arcade-trykknapper | Blå, Grøn, Gul, Rød – momentan (NO) |
-| 1 | WS2812B LED-kæde, **15 pixels** | Knap-/score-lys, farverækkefølge RGB |
+| 1 | WS2812B LED-kæde, **9 pixels** | Knap-/score-lys, farverækkefølge RGB (stor model: 15 pixels) |
 | 1 | WS2812B status-pixel, **1 stk** | Enkelt NeoPixel (GRB) |
 | 1 | I2S-forstærker | Klasse-D med I2S-indgang, fx **MAX98357A** |
 | 1 | Højttaler | Lille 4–8 Ω |
+| 1 | Elektrolyt-kondensator **100 µF** | Over +5V/GND – buffer |
+| 1 | Keramisk kondensator **100 nF** (orange) | På tværs af forsyningen – dæmper støj |
 | 1 | Strømforsyning | USB-C eller batteri (dvale/deep-sleep understøttes) |
 
-> **Stor joystick (Type 1):** samme board, LED-kæde og status-pixel, men **op til 11 knapper** og **ingen** forstærker/højttaler (`HasAudio = false`). Ekstra knapper (P5–P11) tildeles GPIO'er i web-adminen.
+> **Stor joystick (Type 1):** samme board og status-pixel, men **15-pixels** LED-kæde, **op til 11 knapper** og **ingen** forstærker/højttaler (`HasAudio = false`). Ekstra knapper (P5–P11) tildeles GPIO'er i web-adminen.
+>
+> Firmwaren driver op til 15 pixels (`LED_COUNT`); på den lille model er kun de første **9** monteret.
 
 ---
 
@@ -64,7 +68,7 @@ flowchart LR
   B2(["Knap 2 · Grøn"])
   B3(["Knap 3 · Gul"])
   B4(["Knap 4 · Rød"])
-  LEDS["WS2812B kæde<br/>15 pixels"]
+  LEDS["WS2812B kæde<br/>9 px (lille) / 15 px (stor)"]
   STAT{{"Status-pixel ×1"}}
   AMP["I2S-forstærker<br/>(MAX98357A)"]
   SPK["Højttaler"]
