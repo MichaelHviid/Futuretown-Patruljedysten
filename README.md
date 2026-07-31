@@ -77,6 +77,10 @@ Grundopskrift pr. enhed (alt bygget på klassisk **ESP32 / ESP-32S, 4 MB flash**
 
 Pins og antal LEDs kan ændres i web-adminen / `config_manager.h`.
 
+**Stykliste + wirediagram** for hver enhed:
+- 🎮 [docs/HARDWARE-Gamebox.md](docs/HARDWARE-Gamebox.md)
+- 🕹️ [docs/HARDWARE-Joystick.md](docs/HARDWARE-Joystick.md)
+
 ---
 
 ## Byg og flash
