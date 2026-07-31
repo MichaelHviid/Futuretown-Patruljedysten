@@ -24,7 +24,6 @@ Firmwaren er den samme; forskellen er antal knapper (`BtnCount`) og om lyd er sl
 | 1 | Adafruit QT Py ESP32-S3 (N4R2) | 4 MB flash, 2 MB PSRAM, USB-C |
 | 4 | Arcade-trykknapper | Blå, Grøn, Gul, Rød – momentan (NO) |
 | 1 | WS2812B LED-kæde, **9 pixels** | Knap-/score-lys, farverækkefølge RGB (stor model: 15 pixels) |
-| 1 | WS2812B status-pixel, **1 stk** | Enkelt NeoPixel (GRB) |
 | 1 | I2S-forstærker | Klasse-D med I2S-indgang, fx **MAX98357A** |
 | 1 | Højttaler | Lille 4–8 Ω |
 | 1 | Elektrolyt-kondensator **100 µF** | Over +5V/GND – buffer |
@@ -47,7 +46,7 @@ Firmwaren er den samme; forskellen er antal knapper (`BtnCount`) og om lyd er sl
 | **GPIO 10** | Knap 4 – **Rød** → GND | `INPUT_PULLUP`, aktiv-lav |
 | *(vælges i web-UI)* | Knap 5–11 (kun stor model, P5–P11) | Ledige GPIO'er |
 | **GPIO 12** | LED-kæde **DIN** (15 pixels) | Spil-/score-lys |
-| **GPIO 21** | Status-pixel **DIN** (1 stk) | |
+| **GPIO 21** | Status-pixel **DIN** | Onboard NeoPixel – ingen ekstra ledning |
 | **GPIO 2** | I2S **DIN** (forstærkerens data-ind) | Kun med lyd |
 | **GPIO 3** | I2S **BCLK** (bit-clock) | Kun med lyd |
 | **GPIO 4** | I2S **LRC / WS** (word-select) | Kun med lyd |
@@ -69,7 +68,7 @@ flowchart LR
   B3(["Knap 3 · Gul"])
   B4(["Knap 4 · Rød"])
   LEDS["WS2812B kæde<br/>9 px (lille) / 15 px (stor)"]
-  STAT{{"Status-pixel ×1"}}
+  STAT{{"Status-pixel (onboard)"}}
   AMP["I2S-forstærker<br/>(MAX98357A)"]
   SPK["Højttaler"]
 

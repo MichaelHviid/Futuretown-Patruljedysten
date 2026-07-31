@@ -17,7 +17,6 @@ Stykliste og wirediagram for **gameboxen** (den store LED-strip-enhed der afvikl
 | 1 | Arcade-trykknap **RØD** | Momentan, sluttende (NO) |
 | 1 | Arcade-trykknap **GRØN** | Momentan, sluttende (NO) |
 | 1 | 5 V strømforsyning | Til LED-strippen – se note om dimensionering |
-| — | Onboard blå LED (GPIO 2) | Status – sidder på boardet, ingen ekstra ledning |
 
 **Anbefalet for WS2812B (ikke i koden, men god praksis):**
 
