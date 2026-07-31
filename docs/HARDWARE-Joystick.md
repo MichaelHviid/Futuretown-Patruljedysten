@@ -30,7 +30,7 @@ Firmwaren er den samme; forskellen er antal knapper (`BtnCount`) og om lyd er sl
 | 1 | Keramisk kondensator **100 nF** (orange) | På tværs af forsyningen – dæmper støj |
 | 1 | Strømforsyning | USB-C eller batteri (dvale/deep-sleep understøttes) |
 
-> **Stor joystick (Type 1):** samme board og status-pixel, men **15-pixels** LED-kæde, **op til 11 knapper** og **ingen** forstærker/højttaler (`HasAudio = false`). Ekstra knapper (P5–P11) tildeles GPIO'er i web-adminen.
+> **Stor joystick (Type 1):** samme board og status-pixel, men **15-pixels** LED-kæde, **11 knapper** og **ingen** forstærker/højttaler (`HasAudio = false`). De 11 knapper sidder på **GPIO 1–11** (P1–P11 i web-adminen), og LED-kæden på GPIO 12.
 >
 > Firmwaren driver op til 15 pixels (`LED_COUNT`); på den lille model er kun de første **9** monteret.
 
@@ -38,27 +38,45 @@ Firmwaren er den samme; forskellen er antal knapper (`BtnCount`) og om lyd er sl
 
 ## Wiring (pin-oversigt)
 
-| QT Py ESP32-S3 pin | Forbindes til | Note |
-|---|---|---|
-| **GPIO 7** | Knap 1 – **Blå** → GND | `INPUT_PULLUP`, aktiv-lav |
-| **GPIO 8** | Knap 2 – **Grøn** → GND | `INPUT_PULLUP`, aktiv-lav |
-| **GPIO 9** | Knap 3 – **Gul** → GND | `INPUT_PULLUP`, aktiv-lav |
-| **GPIO 10** | Knap 4 – **Rød** → GND | `INPUT_PULLUP`, aktiv-lav |
-| *(vælges i web-UI)* | Knap 5–11 (kun stor model, P5–P11) | Ledige GPIO'er |
-| **GPIO 12** | LED-kæde **DIN** (15 pixels) | Spil-/score-lys |
-| **GPIO 21** | Status-pixel **DIN** | Onboard NeoPixel – ingen ekstra ledning |
-| **GPIO 2** | I2S **DIN** (forstærkerens data-ind) | Kun med lyd |
-| **GPIO 3** | I2S **BCLK** (bit-clock) | Kun med lyd |
-| **GPIO 4** | I2S **LRC / WS** (word-select) | Kun med lyd |
-| **5V** | Forstærker Vin + LED +5V | |
-| **GND** | Fælles stel (knapper, LED, forstærker) | |
+**Knapper – lille model (Type 0, 4 knapper):**
 
-Knapperne sidder mellem GPIO og **GND** (intern pull-up, aktiv-lav). Knap 1–4 vækker også boardet fra dvale.
-Forstærkerens `SD`/`GAIN` sættes efter dens eget datablad (fx `GAIN` uforbundet = 9 dB).
+| Pin | Knap |
+|---|---|
+| **GPIO 7** | Knap 1 – Blå |
+| **GPIO 8** | Knap 2 – Grøn |
+| **GPIO 9** | Knap 3 – Gul |
+| **GPIO 10** | Knap 4 – Rød |
+
+**Knapper – stor model (Type 1, 11 knapper):**
+
+| Pin | Knap |
+|---|---|
+| **GPIO 1 – GPIO 11** | Knap 1 – 11 (én GPIO pr. knap) |
+
+**Fælles for begge modeller:**
+
+| Pin | Forbindes til | Note |
+|---|---|---|
+| **GPIO 12** | LED-kæde **DIN** | 9 px (lille) / 15 px (stor) |
+| **GPIO 21** | Status-pixel | Onboard NeoPixel – ingen ekstra ledning |
+| **5V** | LED +5V (+ forstærker Vin på lille model) | |
+| **GND** | Fælles stel | |
+
+**Kun lille model (lyd via I2S):**
+
+| Pin | I2S |
+|---|---|
+| **GPIO 2** | DIN (data) |
+| **GPIO 3** | BCLK (bit-clock) |
+| **GPIO 4** | LRC / WS (word-select) |
+
+Alle knapper sidder mellem deres GPIO og **GND** (intern pull-up, aktiv-lav). Med lyd (lille model) vækkes boardet fra dvale via knap 1–4; uden lyd (stor model) er I2S-pinnene frie, så flere knapper kan bruges som wake-kilde. Forstærkerens `SD`/`GAIN` sættes efter dens eget datablad (fx `GAIN` uforbundet = 9 dB).
 
 ---
 
 ## Wirediagram
+
+### Lille model (Type 0 – 4 knapper + lyd)
 
 ```mermaid
 flowchart LR
@@ -67,7 +85,7 @@ flowchart LR
   B2(["Knap 2 · Grøn"])
   B3(["Knap 3 · Gul"])
   B4(["Knap 4 · Rød"])
-  LEDS["WS2812B kæde<br/>9 px (lille) / 15 px (stor)"]
+  LEDS["WS2812B kæde<br/>9 pixels"]
   STAT{{"Status-pixel (onboard)"}}
   AMP["I2S-forstærker<br/>(MAX98357A)"]
   SPK["Højttaler"]
@@ -84,6 +102,20 @@ flowchart LR
   AMP -->|"+ / −"| SPK
 ```
 
+### Stor model (Type 1 – 11 knapper, ingen lyd)
+
+```mermaid
+flowchart LR
+  ESP2["QT Py ESP32-S3"]
+  BTN(["Knap 1 – 11"])
+  LEDS2["WS2812B kæde<br/>15 pixels"]
+  STAT2{{"Status-pixel (onboard)"}}
+
+  BTN  ---|"GPIO 1–11 ↔ GND<br/>(én pr. knap)"| ESP2
+  ESP2 -->|"GPIO 12 → DIN"| LEDS2
+  ESP2 -->|"GPIO 21 → DIN"| STAT2
+```
+
 ---
 
 ## Config-mode
@@ -92,4 +124,4 @@ Hold **knap 1 + knap 2** nede ved opstart → joysticket starter access point `J
 
 ---
 
-*Knapfarverne følger kappen; firmwaren sender kun knap-indeks (1–4). Forstærker-model (MAX98357A) er ikke fastlagt i koden – enhver I2S-klasse-D-forstærker med BCLK/LRC/DIN passer til pin-opsætningen.*
+*Knapfarverne følger kappen; firmwaren sender kun knap-indeks (1–4 på lille, 1–11 på stor). Forstærker-model (MAX98357A) er ikke fastlagt i koden – enhver I2S-klasse-D-forstærker med BCLK/LRC/DIN passer til pin-opsætningen.*
