@@ -29,3 +29,6 @@ dist/
 
 # ── Arkiver / backups ──
 *.zip
+
+# ── Office midlertidige lås-filer (åbne dokumenter) ──
+~$*

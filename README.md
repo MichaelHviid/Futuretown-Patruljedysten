@@ -153,9 +153,11 @@ Alle kodeord i kildekoden er **pladsholdere** (`12345678`). Sæt dine egne via w
 
 ## Vejledning
 
-Se `docs/` for den fulde vejledning (`Patruljedyst vejledning.pptx`). Billeder af det loddede hardware tilføjes samme sted.
+Se `docs/` for den fulde vejledning:
+- 📄 [Patruljedyst vejledning.pdf](docs/Patruljedyst%20vejledning.pdf) — spil-vejledning
+- 📄 [Patruljedyst hardware.pdf](docs/Patruljedyst%20hardware.pdf) — hardware / opbygning
 
-*(Tip: eksportér gerne PowerPointen til PDF – så kan den vises direkte på GitHub.)*
+PowerPoint-kilderne (`.pptx`) ligger samme sted.
 
 ---
 
